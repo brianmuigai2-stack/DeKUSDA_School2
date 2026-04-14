@@ -26,6 +26,20 @@ export default function AuthModal({ mode, onClose, onSwitch }) {
         })
         console.log("SIGNUP ATTEMPT:", { email, name, data, error })
         if (error) throw error
+        
+        // Create profile manually after successful signup
+        if (data.user) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert({
+              id: data.user.id,
+              full_name: name,
+              email: email,
+              role: 'member'
+            })
+          console.log("PROFILE CREATE:", { profileError })
+        }
+        
         toast.success('Account created! Welcome to the community.')
         onClose()
       }
